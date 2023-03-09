@@ -14,15 +14,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            Text('TEST 페이지입니다.', style: TextStyle(fontSize: 20))
-          ],
+      body: SafeArea(
+        child: Container(
+          // padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text('TEST 페이지입니다.', style: TextStyle(fontSize: 20))
+            ],
+          ),
         ),
       ),
     );
