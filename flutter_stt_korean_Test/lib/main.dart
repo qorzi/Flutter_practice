@@ -85,11 +85,21 @@ class MyApp extends StatelessWidget {
   Future<void> startListening() async {
     bool available = await speech.initialize(
       // debugLogging: true,
-      onStatus: (status) => print('status $status'),
+      onStatus: (status) {
+        print('status: $status');
+        if (status == 'listening') {
+          // 음성 인식 시작
+        }
+        if (status == 'done') {
+          // 음성 인식 종료
+          // print('재시작!');
+          // startListening();
+        }
+      },
       onError: (error) {
-        print('error $error');
+        print('error: $error');
         if (error.errorMsg == 'error_speech_timeout') {
-          startListening(); // 다시 시작
+          // startListening(); // 다시 시작
         }
       }
     );
@@ -97,9 +107,9 @@ class MyApp extends StatelessWidget {
     if ( available ) {
       speech.listen(
         onResult: (result) {
-          print('result $result.recognizedWords');
-          print(result);
-        }
+          print('result: ${result.recognizedWords}');
+          // print(result);
+        },
       );
     } else {
       print("음성인식을 사용할 수 없어요.");
