@@ -29,14 +29,6 @@ class LoginScreen extends StatelessWidget {
                   // GET 메서드 호출
                   Response response = await _apiService.getUser(2);
                   print(response);
-
-                  // POST 메서드 호출
-                  // Map<String, dynamic> userData = {'name': 'John Doe', 'email': 'johndoe@example.com'};
-                  // Response postUserResponse = await _apiService.postUser(userData);
-
-                  // PUT 메서드 호출
-                  // Map<String, dynamic> updatedUserData = {'name': 'John Doe Jr.'};
-                  // Response putUserResponse = await _apiService.putUser(2, updatedUserData);
                 },
                 child: Image.asset(
                   'assets/google_login_btn.png',

@@ -21,6 +21,11 @@ class ApiService {
     return await _dio.put('/api/users/$userId', data: userData);
   }
 
+  // delete
+  Future<Response> deleteUser(int userId) async {
+    return await _dio.delete('/api/users/$userId');
+  }
+
 
 }
 
@@ -41,3 +46,6 @@ class ApiService {
 // // PUT 메서드 호출
 // Map<String, dynamic> updatedUserData = {'name': 'John Doe Jr.'};
 // Response putUserResponse = await _apiService.putUser(2, updatedUserData);
+
+// // DELETE
+// Response getUserResponse = await _apiService.deleteUser(2);
