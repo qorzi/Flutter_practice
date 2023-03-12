@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:splash_login/home.dart';
+import 'package:splash_login/login.dart';
 
 void main() {
   runApp(
@@ -24,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // 1초 후에 _isMoved 값을 변경하여 애니메이션을 발생시킴
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
         _isMoved = true;
       });
@@ -34,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
         });
         // _navigateToNextScreen();
       });
-      Future.delayed(Duration(seconds: 3), () {
+      Future.delayed(Duration(seconds: 1), () {
         _navigateToNextScreen();
       });
     });
@@ -93,47 +95,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
             )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: Center(
-        child: Text('Welcome Home!'),
-      ),
-    );
-  }
-}
-
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Color(0xFFF2E4D9),
-        child: Stack(
-          children: [
-            Positioned(
-              top: MediaQuery.of(context).size.height / 2 - 191,
-              left: MediaQuery.of(context).size.width / 2 - 109,
-              child: Image.asset(
-                'assets/main_logo_red_x1.png',
-                // width: 200,
-              ),
-            ),
           ],
         ),
       ),
