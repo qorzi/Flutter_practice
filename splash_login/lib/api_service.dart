@@ -5,26 +5,30 @@ class ApiService {
   final Dio _dio = DioServices().to(); // 기존의 Dio 객체 생성
 
   // get
-  Future<Response> getUser(int userId) async {
-    return await _dio.get('/api/users/$userId');
+  Future<Response> getUser() async {
+    return await _dio.get('/account/tmp');
   }
 
   // 다른 API 호출 함수들 추가 가능
   
   // post
-  Future<Response> postUser(Map<String, dynamic> userData) async {
-    return await _dio.post('/api/users', data: userData);
-  }
-  
-  // put
-  Future<Response> putUser(int userId, Map<String, dynamic> userData) async {
-    return await _dio.put('/api/users/$userId', data: userData);
+  Future<Response> loginUser(Map<String, dynamic> userData) async {
+    return await _dio.post('/account/check', data: userData);
   }
 
-  // delete
-  Future<Response> deleteUser(int userId) async {
-    return await _dio.delete('/api/users/$userId');
+  Future<Response> signupUser(Map<String, dynamic> userData) async {
+    return await _dio.post('/account/signup', data: userData);
   }
+  
+  // // put
+  // Future<Response> putUser(int userId, Map<String, dynamic> userData) async {
+  //   return await _dio.put('/api/users/$userId', data: userData);
+  // }
+
+  // // delete
+  // Future<Response> deleteUser(int userId) async {
+  //   return await _dio.delete('/api/users/$userId');
+  // }
 
 
 }

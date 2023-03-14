@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:splash_login/home.dart';
 import 'package:splash_login/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 void main() {
   runApp(
@@ -10,6 +12,7 @@ void main() {
     ),
   );
 }
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -21,6 +24,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool _isMoved = false;
   bool _isVisible = false;
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
@@ -42,10 +46,22 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  void _navigateToNextScreen() {
-    final isLoggedIn = false; // 여기에 로그인 상태를 확인하는 로직을 구현합니다.
+  // 이미 로그인 되어 있는지 판단하고, 홈/로그인 분기합니다.
+  void _navigateToNextScreen() async{
+    // 데이터 가져오기
+    Future<SharedPreferences> _sprefs = SharedPreferences.getInstance();
+    _sprefs.then((prefs) {
+      final String jsonString = prefs.getString('userData') ?? ''; // 기본값으로 빈 문자열을 사용합니다.
+      final Map<String, dynamic> userData = json.decode(jsonString);
+      setState(() {
+        _isLoggedIn = userData['jwtToken'] == null ? false : true; // 여기에 로그인 상태를 확인하는 로직을 구현합니다.
+      });
+    },
+    onError: (error) {
+      print("SharedPreferences ERROR = $error");   
+    });
 
-    if (isLoggedIn) {
+    if (_isLoggedIn) {
       Route home = MaterialPageRoute(builder: (context) => HomeScreen());
       Navigator.pushReplacement(context, home); // 로그인 상태이면 홈화면으로 이동합니다.
     } else {
