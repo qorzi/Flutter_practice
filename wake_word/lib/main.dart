@@ -35,7 +35,7 @@ class _WakeUpState extends State<WakeUp> {
   }
 
   void _initPorcupine() async {
-    const accessKey = "d1erk8NonEE9s81e8mxaIrn69SBI01A2fxZzXgXfnfRTvMP0zqhwTA==";  // Picovoice Console(https://picovoice.ai/console/)에서 얻은 AccessKey
+    const accessKey = "";  // Picovoice Console(https://picovoice.ai/console/)에서 얻은 AccessKey
     String keywordAsset = "assets/hey_cocook.ppn";
     String modelAsset = "assets/porcupine_params_ko.pv";
 
