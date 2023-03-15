@@ -4,6 +4,8 @@ import 'package:auth_test/api_service.dart';
 import 'package:flutter/services.dart'; // 정규식 메서드 가져오기
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auth_test/home.dart';
+import 'package:auth_test/custom_text_field.dart';
+import 'dart:convert';
 
 class SignUp extends StatefulWidget {
   final String email; // 이메일 필드 추가
@@ -55,41 +57,19 @@ class _SignUpState extends State<SignUp> {
                     children: [
                       Text('사용하실 닉네임을 입력해주세요.'),
                       SizedBox(height: 16), // 공백
-                      SizedBox(
-                        width: double.infinity,
-                        child: TextField(
-                          autofocus: true, // 자동 포커싱
-                          textAlignVertical: TextAlignVertical.center, // 수직 방향 중앙 정렬
-                          inputFormatters: [
-                            // 정규화 필터링 포메터
-                            FilteringTextInputFormatter.allow(RegExp('[ㄱ-ㅎ|ㅏ-ㅣ|가-힣a-zA-Z]')),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              // 값이 변할때 마다 _nickname 변경
-                              _nickname = value;
-                            });
-                          },
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            suffix: _isError ? Padding(
-                              padding: const EdgeInsets.only(top: 6.0),
-                              child: Image.asset('assets/textFiled_incorrect.png')
-                            ) : null,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              borderSide: const BorderSide(color: Color(0xFFD91604), width: 4.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              borderSide: const BorderSide(color: Color(0xFFD91604), width: 4.0),
-                            ),
+                      Stack( // 텍스트 필드와 에러 텍스트 위치를 위한 스택
+                        children: [
+                          CustomTextField(
+                            onChanged: onNicknameChanged,
+                            isError: _isError,
                           ),
-                        ),
+                          Positioned(
+                            bottom: 0,
+                            child: ErrorMessage(errorMessage: _errorMessage)
+                          ),
+                        ]
                       ),
                       SizedBox(height: 16), // 공백
-                      Text(_errorMessage ?? ''), // null이 아닐 경우만, 표시.
                       ElevatedButton(
                         onPressed: () {
                           _signUp(context);
@@ -114,11 +94,21 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
+
+  // 커스텀 텍스트 필드에 내려주기 위한 onChange-setState 함수
+  void onNicknameChanged(String value) {
+    setState(() {
+      _nickname = value;
+      _isError = false;
+      _errorMessage = null;
+    });
+  }
   
+  // 회원가입 로직
   Future<void> _signUp(BuildContext context) async {
 
     // 유효성 검증
-    if (_nickname == null) {
+    if (_nickname == null || _nickname == '') {
       setState(() {
         _errorMessage = '닉네임을 입력해주세요.';
         _isError = true;
@@ -133,25 +123,28 @@ class _SignUpState extends State<SignUp> {
       'nickname': _nickname,
       'access_token': widget.token
     };
-    print(userData); // 데이터 확인
+    print('body: $userData'); // 데이터 확인
     Response? response = await _apiService.signupUser(userData);
     print('응답: $response');
 
+    // 디코딩
+    Map<String, dynamic> decodeRes = jsonDecode(response.toString());
+
     // 상태 분기
-    if (response?.statusCode == 409) {
+    if (decodeRes['status'] == 409) {
       // 중복 닉네임 에러 409
       print('이미 존재하는 이메일 or 이미 존재하는 닉네임인 경우');
 
       setState(() {
-        _errorMessage = response.toString();
+        _errorMessage = decodeRes['message'];
         _isError = true;
       });
 
       return;
-    } else if (response?.statusCode == 201) {
+    } else if (decodeRes['status'] == 200) {
       // shared preferences에 저장
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('userData', response!.data.toString());
+      prefs.setString('userData', response.toString());
       print('저장 완료');
 
       setState(() {
@@ -175,8 +168,27 @@ class _SignUpState extends State<SignUp> {
 
       return;
     }
-
-
   }
 }
                         
+class ErrorMessage extends StatelessWidget {
+  final String? errorMessage;
+  const ErrorMessage({super.key, this.errorMessage});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0),
+      child: Container(
+        alignment: Alignment.centerLeft, // 왼쪽 정렬 추가
+        child: Text(
+          errorMessage ?? '',
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.red
+          ),
+        ),
+      ),
+    );
+  }
+}

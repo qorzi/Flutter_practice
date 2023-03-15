@@ -3,15 +3,25 @@ import 'package:auth_test/dio_service.dart';
 
 class ApiService {
   final Dio _dio = DioServices().to(); // 기존의 Dio 객체 생성
-
+  
   // GET
-  Future<Response> getUser() async {
-    return await _dio.get('/account/tmp');
+  Future<Response?> getUser() async {
+    try {
+      return await _dio.get('/account/tmp');
+    } on DioError catch (e) {
+      // DioError 처리
+      return e.response; // DioError가 발생한 경우에도 무조건 리턴
+    }
   }
   
   // POST
-  Future<Response> loginUser(Map<String, dynamic> userData) async {
-    return await _dio.post('/account/check', data: userData);
+  Future<Response?> loginUser(Map<String, dynamic> userData) async {
+    try {
+      return await _dio.post('/account/check', data: userData);
+    } on DioError catch (e) {
+      // DioError 처리
+      return e.response; // DioError가 발생한 경우에도 무조건 리턴
+    }
   }
 
   Future<Response?> signupUser(Map<String, dynamic> userData) async {

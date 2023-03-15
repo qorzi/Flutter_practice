@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:auth_test/signup.dart';
 import 'package:auth_test/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,7 +22,6 @@ class LoginScreen extends StatelessWidget {
               right: MediaQuery.of(context).size.width / 2 - 109,
               child: Image.asset(
                 'assets/main_logo_red_x1.png',
-                // width: 200,
               ),
             ),
             Positioned(
@@ -67,19 +67,23 @@ Future<void> signInWithGoogle(BuildContext context) async {
     print('유저정보 확인!');
     ApiService _apiService = ApiService();
     Map<String, dynamic> userData = {'access_token': userToken};
-    Response response = await _apiService.loginUser(userData);
-    print(response);
+    Response? response  = await _apiService.loginUser(userData);
+    print('응답: ${response.toString()}'); // {"message":"OK","status":200,"data":{"user_idx":null,"email":"xxxx@gmail.com","nickname":null,"jwtToken":null}}
 
-    if (response.data['user_idx'] == null) {
+    // 디코딩
+    Map<String, dynamic> decodeRes = jsonDecode(response.toString());
+    print('디코딩 : $decodeRes');
+
+    if (decodeRes['data']['user_idx'] == null) {
       print('회원가입으로 이동!');
-      String userEmail = response.data['email'];
+      String userEmail = decodeRes['data']['email'];
       Route signup = MaterialPageRoute(builder: (context) => SignUp(email: userEmail, token: userToken));
       Navigator.pushReplacement(context, signup);
     } else {
       print('로컬에 유저정보 저장!');
       // shared preferences에 저장
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('userData', response.data.toString());
+      prefs.setString('userData', response.toString());
 
       print('홈으로 이동!');
       Route home = MaterialPageRoute(builder: (context) => HomeScreen());

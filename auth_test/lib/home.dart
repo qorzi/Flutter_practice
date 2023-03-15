@@ -3,12 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auth_test/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-Future<void> signOutGoogle() async{
-  final GoogleSignIn googleSignIn = GoogleSignIn(); // 구글 로그인 함수 불러오기
-  await googleSignIn.signOut();
-  print('로그아웃!');
-}
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -33,4 +27,10 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> signOutGoogle() async{
+  final GoogleSignIn googleSignIn = GoogleSignIn(); // 구글 로그인 함수 불러오기
+  await googleSignIn.signOut();
+  print('로그아웃!');
 }

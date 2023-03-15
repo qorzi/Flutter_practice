@@ -90,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // 데이터 가져오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String userData = prefs.getString('userData') ?? ''; // 기본값으로 빈 문자열을 사용합니다.
-    print(userData);
+    print('DB유저정보: ${userData}');
     
     if (userData != null && userData.isNotEmpty) {
       // 로컬에 유저정보가 존재한다면,
